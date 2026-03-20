@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { matches } from "@/data/mockData";
+import { matches, matchReviews } from "@/data/mockData";
 import { Header } from "@/components/Header";
 import { MatchCard } from "@/components/MatchCard";
-import { TrendingUp } from "lucide-react";
+import { ReviewCard } from "@/components/ReviewCard";
+import { TrendingUp, Flame } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
