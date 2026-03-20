@@ -10,6 +10,11 @@ const Index = () => {
   const featured = matches.find((m) => m.isFeatured);
   const otherMatches = matches.filter((m) => !m.isFeatured);
 
+  const hotReviews = Object.values(matchReviews)
+    .flat()
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 5);
+
   const handleMatchClick = (id: string) => {
     navigate(`/match/${id}`);
   };
