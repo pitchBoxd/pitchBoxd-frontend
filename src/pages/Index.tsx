@@ -1,13 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { matches } from "@/data/mockData";
+import { matches, matchReviews } from "@/data/mockData";
 import { Header } from "@/components/Header";
 import { MatchCard } from "@/components/MatchCard";
-import { TrendingUp } from "lucide-react";
+import { ReviewCard } from "@/components/ReviewCard";
+import { TrendingUp, Flame } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const featured = matches.find((m) => m.isFeatured);
   const otherMatches = matches.filter((m) => !m.isFeatured);
+
+  const hotReviews = Object.values(matchReviews)
+    .flat()
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 5);
 
   const handleMatchClick = (id: string) => {
     navigate(`/match/${id}`);
@@ -57,6 +63,21 @@ const Index = () => {
           {otherMatches.map((match) => (
             <MatchCard key={match.id} match={match} onClick={handleMatchClick} />
           ))}
+        </div>
+
+        {/* Hot Reviews */}
+        <div className="mt-10">
+          <div className="flex items-center gap-2 mb-4">
+            <Flame className="w-4 h-4 text-pitch" />
+            <h2 className="font-display font-semibold text-foreground text-sm">
+              지금 가장 핫한 한줄평
+            </h2>
+          </div>
+          <div className="space-y-3">
+            {hotReviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))}
+          </div>
         </div>
       </main>
     </div>
