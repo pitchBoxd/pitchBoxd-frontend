@@ -117,6 +117,25 @@ export const matches: Match[] = [
     homeScore: 1, awayScore: 1, date: "2026-02-28", venue: "서울월드컵경기장",
     avgRating: 3.6, totalRatings: 1102, homeTeamLogo: "🔴", awayTeamLogo: "🟢",
   },
+  // Upcoming round (not yet played)
+  {
+    id: "match-10", round: 13, homeTeam: "수원 삼성", awayTeam: "FC 서울",
+    homeTeamId: "suwon", awayTeamId: "fcseoul",
+    homeScore: 0, awayScore: 0, date: "2026-03-28", venue: "수원월드컵경기장",
+    avgRating: 0, totalRatings: 0, homeTeamLogo: "🔵", awayTeamLogo: "🔴",
+  },
+  {
+    id: "match-11", round: 13, homeTeam: "울산 HD", awayTeam: "전북 현대",
+    homeTeamId: "ulsan", awayTeamId: "jeonbuk",
+    homeScore: 0, awayScore: 0, date: "2026-03-28", venue: "울산문수축구경기장",
+    avgRating: 0, totalRatings: 0, homeTeamLogo: "🟠", awayTeamLogo: "🟢",
+  },
+  {
+    id: "match-12", round: 13, homeTeam: "인천 유나이티드", awayTeam: "대구 FC",
+    homeTeamId: "incheon", awayTeamId: "daegu",
+    homeScore: 0, awayScore: 0, date: "2026-03-29", venue: "인천축구전용경기장",
+    avgRating: 0, totalRatings: 0, homeTeamLogo: "🔷", awayTeamLogo: "🔵",
+  },
 ];
 
 export const matchPlayers: Record<string, Player[]> = {

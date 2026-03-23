@@ -9,6 +9,7 @@ import Teams from "./pages/Teams.tsx";
 import TeamDetail from "./pages/TeamDetail.tsx";
 import Players from "./pages/Players.tsx";
 import PlayerDetail from "./pages/PlayerDetail.tsx";
+import Rounds from "./pages/Rounds.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/match/:id" element={<MatchDetail />} />
+          <Route path="/rounds" element={<Rounds />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/teams/:id" element={<TeamDetail />} />
           <Route path="/players" element={<Players />} />
