@@ -1,5 +1,6 @@
-import { Star } from "lucide-react";
+import { Star, StarHalf } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface StarRatingProps {
   rating: number;
@@ -10,43 +11,72 @@ interface StarRatingProps {
 }
 
 const sizeMap = {
-  sm: "w-3.5 h-3.5",
-  md: "w-5 h-5",
-  lg: "w-7 h-7",
+  sm: "w-4 h-4",
+  md: "w-6 h-6",
+  lg: "w-8 h-8",
 };
 
 export const StarRating = ({
   rating,
-  maxRating = 10,
+  maxRating = 5,
   size = "md",
   interactive = false,
   onRate,
 }: StarRatingProps) => {
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const displayRating = hoverRating ?? rating;
+
+  const handleClick = (starIndex: number, isLeftHalf: boolean) => {
+    if (!interactive || !onRate) return;
+    const value = isLeftHalf ? starIndex + 0.5 : starIndex + 1;
+    onRate(value);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, starIndex: number) => {
+    if (!interactive) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const isLeftHalf = e.clientX - rect.left < rect.width / 2;
+    setHoverRating(isLeftHalf ? starIndex + 0.5 : starIndex + 1);
+  };
+
   return (
-    <div className="flex items-center gap-0.5">
+    <div
+      className="flex items-center gap-0.5"
+      onMouseLeave={() => interactive && setHoverRating(null)}
+    >
       {Array.from({ length: maxRating }, (_, i) => {
-        const filled = i < Math.round(rating);
+        const fillLevel =
+          displayRating >= i + 1 ? "full" : displayRating >= i + 0.5 ? "half" : "empty";
+
         return (
-          <button
+          <div
             key={i}
-            type="button"
-            disabled={!interactive}
-            onClick={() => onRate?.(i + 1)}
             className={cn(
-              "transition-colors duration-150",
-              interactive && "cursor-pointer hover:scale-110",
-              !interactive && "cursor-default"
+              "relative transition-transform duration-150",
+              interactive && "cursor-pointer hover:scale-110"
             )}
+            onMouseMove={(e) => handleMouseMove(e, i)}
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const isLeftHalf = e.clientX - rect.left < rect.width / 2;
+              handleClick(i, isLeftHalf);
+            }}
           >
-            <Star
-              className={cn(
-                sizeMap[size],
-                filled
-                  ? "fill-accent text-accent"
-                  : "fill-none text-muted-foreground/30"
-              )}
-            />
-          </button>
+            {fillLevel === "full" && (
+              <Star className={cn(sizeMap[size], "fill-accent text-accent")} />
+            )}
+            {fillLevel === "half" && (
+              <div className="relative">
+                <Star className={cn(sizeMap[size], "fill-none text-muted-foreground/30")} />
+                <div className="absolute inset-0 overflow-hidden w-1/2">
+                  <Star className={cn(sizeMap[size], "fill-accent text-accent")} />
+                </div>
+              </div>
+            )}
+            {fillLevel === "empty" && (
+              <Star className={cn(sizeMap[size], "fill-none text-muted-foreground/30")} />
+            )}
+          </div>
         );
       })}
     </div>

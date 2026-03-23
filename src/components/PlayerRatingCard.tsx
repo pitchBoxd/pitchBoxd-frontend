@@ -14,7 +14,7 @@ const positionColor: Record<string, string> = {
   GK: "text-accent",
   DF: "text-blue-400",
   MF: "text-pitch",
-  FW: "text-red-400",
+  FW: "text-destructive",
 };
 
 export const PlayerRatingCard = ({ player }: PlayerRatingCardProps) => {
@@ -31,7 +31,7 @@ export const PlayerRatingCard = ({ player }: PlayerRatingCardProps) => {
     >
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-3 w-full p-3 text-left hover:bg-surface-hover transition-colors rounded-md"
+        className="flex items-center gap-3 w-full p-3 text-left hover:bg-secondary/50 transition-colors rounded-md"
       >
         <div className="flex items-center justify-center w-8 h-8 rounded-md bg-secondary font-display text-xs font-bold text-secondary-foreground">
           {player.number}
@@ -66,7 +66,7 @@ export const PlayerRatingCard = ({ player }: PlayerRatingCardProps) => {
             <StarRating rating={rating} size="sm" interactive onRate={setRating} />
             {rating > 0 && (
               <span className="font-display font-bold text-accent text-sm">
-                {rating}/10
+                {rating}/5
               </span>
             )}
           </div>

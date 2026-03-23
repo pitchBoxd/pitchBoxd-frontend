@@ -32,7 +32,6 @@ const MatchDetail = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container max-w-5xl mx-auto px-4 py-8">
-        {/* Back */}
         <button
           onClick={() => navigate("/")}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
@@ -41,7 +40,6 @@ const MatchDetail = () => {
           전체 경기
         </button>
 
-        {/* Match Header */}
         <div className="rounded-xl border border-border bg-card p-8 mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-muted-foreground font-display">
@@ -55,22 +53,16 @@ const MatchDetail = () => {
 
           <div className="flex items-center justify-center gap-6 my-6">
             <div className="flex-1 text-right">
-              <p className="font-display font-bold text-xl text-foreground">
-                {match.homeTeam}
-              </p>
+              <p className="font-display font-bold text-xl text-foreground">{match.homeTeam}</p>
               <p className="text-xs text-muted-foreground mt-1">HOME</p>
             </div>
-
             <div className="flex items-center gap-3 font-display">
               <span className="text-4xl font-bold text-foreground">{match.homeScore}</span>
               <span className="text-xl text-muted-foreground">:</span>
               <span className="text-4xl font-bold text-foreground">{match.awayScore}</span>
             </div>
-
             <div className="flex-1 text-left">
-              <p className="font-display font-bold text-xl text-foreground">
-                {match.awayTeam}
-              </p>
+              <p className="font-display font-bold text-xl text-foreground">{match.awayTeam}</p>
               <p className="text-xs text-muted-foreground mt-1">AWAY</p>
             </div>
           </div>
@@ -79,10 +71,7 @@ const MatchDetail = () => {
             <RatingBadge rating={match.avgRating} size="lg" />
             <span className="text-sm text-muted-foreground">평균 평점</span>
           </div>
-
-          <p className="text-center text-xs text-muted-foreground mt-3">
-            📍 {match.venue}
-          </p>
+          <p className="text-center text-xs text-muted-foreground mt-3">📍 {match.venue}</p>
         </div>
 
         {/* Rate this match */}
@@ -92,7 +81,7 @@ const MatchDetail = () => {
             <StarRating rating={userRating} size="lg" interactive onRate={setUserRating} />
             {userRating > 0 && (
               <span className="font-display font-bold text-accent text-2xl">
-                {userRating}/10
+                {userRating}/5
               </span>
             )}
           </div>
@@ -112,9 +101,7 @@ const MatchDetail = () => {
         {/* Player Ratings */}
         {players.length > 0 && (
           <div className="mb-8">
-            <h2 className="font-display font-semibold text-foreground mb-4">
-              선수 평점
-            </h2>
+            <h2 className="font-display font-semibold text-foreground mb-4">선수 평점</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {starters.map((player) => (
                 <PlayerRatingCard key={player.id} player={player} />
