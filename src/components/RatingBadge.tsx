@@ -6,9 +6,9 @@ interface RatingBadgeProps {
 }
 
 const getRatingColor = (rating: number) => {
-  if (rating >= 8) return "bg-primary text-primary-foreground";
-  if (rating >= 6) return "bg-accent text-accent-foreground";
-  if (rating >= 4) return "bg-muted text-muted-foreground";
+  if (rating >= 4) return "bg-primary text-primary-foreground";
+  if (rating >= 3) return "bg-accent text-accent-foreground";
+  if (rating >= 2) return "bg-muted text-muted-foreground";
   return "bg-destructive text-destructive-foreground";
 };
 
