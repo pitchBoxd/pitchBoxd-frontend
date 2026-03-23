@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "경기", path: "/" },
+  { label: "라운드", path: "/rounds" },
   { label: "팀", path: "/teams" },
   { label: "선수", path: "/players" },
 ];
