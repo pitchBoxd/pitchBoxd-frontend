@@ -9,6 +9,7 @@ import Teams from "./pages/Teams.tsx";
 import TeamDetail from "./pages/TeamDetail.tsx";
 import Players from "./pages/Players.tsx";
 import PlayerDetail from "./pages/PlayerDetail.tsx";
+import Rounds from "./pages/Rounds.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
