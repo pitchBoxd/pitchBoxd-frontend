@@ -31,6 +31,8 @@ export interface Match {
   date: string;
   venue: string;
   avgRating: number;
+  homeAvgRating: number;
+  awayAvgRating: number;
   totalRatings: number;
   homeTeamLogo: string;
   awayTeamLogo: string;
