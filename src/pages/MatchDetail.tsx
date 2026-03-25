@@ -67,9 +67,15 @@ const MatchDetail = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3">
-            <RatingBadge rating={match.avgRating} size="lg" />
-            <span className="text-sm text-muted-foreground">평균 평점</span>
+          <div className="flex items-center justify-center gap-6">
+            <div className="flex flex-col items-center gap-1">
+              <RatingBadge rating={match.homeAvgRating} size="lg" />
+              <span className="text-xs text-muted-foreground">홈팀 평점</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <RatingBadge rating={match.awayAvgRating} size="lg" />
+              <span className="text-xs text-muted-foreground">원정팀 평점</span>
+            </div>
           </div>
           <p className="text-center text-xs text-muted-foreground mt-3">📍 {match.venue}</p>
         </div>

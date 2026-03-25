@@ -31,6 +31,8 @@ export interface Match {
   date: string;
   venue: string;
   avgRating: number;
+  homeAvgRating: number;
+  awayAvgRating: number;
   totalRatings: number;
   homeTeamLogo: string;
   awayTeamLogo: string;
@@ -66,75 +68,73 @@ export const matches: Match[] = [
     id: "match-1", round: 12, homeTeam: "FC 서울", awayTeam: "수원 삼성",
     homeTeamId: "fcseoul", awayTeamId: "suwon",
     homeScore: 3, awayScore: 1, date: "2026-03-14", venue: "서울월드컵경기장",
-    avgRating: 4.2, totalRatings: 1247, homeTeamLogo: "🔴", awayTeamLogo: "🔵", isFeatured: true,
+    avgRating: 4.2, homeAvgRating: 4.5, awayAvgRating: 3.2, totalRatings: 1247, homeTeamLogo: "🔴", awayTeamLogo: "🔵", isFeatured: true,
   },
   {
     id: "match-2", round: 12, homeTeam: "전북 현대", awayTeam: "울산 HD",
     homeTeamId: "jeonbuk", awayTeamId: "ulsan",
     homeScore: 2, awayScore: 2, date: "2026-03-14", venue: "전주월드컵경기장",
-    avgRating: 3.9, totalRatings: 983, homeTeamLogo: "🟢", awayTeamLogo: "🟠",
+    avgRating: 3.9, homeAvgRating: 3.8, awayAvgRating: 4.0, totalRatings: 983, homeTeamLogo: "🟢", awayTeamLogo: "🟠",
   },
   {
     id: "match-3", round: 12, homeTeam: "대구 FC", awayTeam: "인천 유나이티드",
     homeTeamId: "daegu", awayTeamId: "incheon",
     homeScore: 1, awayScore: 0, date: "2026-03-15", venue: "DGB대구은행파크",
-    avgRating: 3.1, totalRatings: 412, homeTeamLogo: "🔵", awayTeamLogo: "🔷",
+    avgRating: 3.1, homeAvgRating: 3.4, awayAvgRating: 2.8, totalRatings: 412, homeTeamLogo: "🔵", awayTeamLogo: "🔷",
   },
   {
     id: "match-4", round: 12, homeTeam: "포항 스틸러스", awayTeam: "제주 유나이티드",
     homeTeamId: "pohang", awayTeamId: "jeju",
     homeScore: 4, awayScore: 2, date: "2026-03-15", venue: "포항스틸야드",
-    avgRating: 4.0, totalRatings: 678, homeTeamLogo: "🔴", awayTeamLogo: "🟠",
+    avgRating: 4.0, homeAvgRating: 4.3, awayAvgRating: 3.1, totalRatings: 678, homeTeamLogo: "🔴", awayTeamLogo: "🟠",
   },
   {
     id: "match-5", round: 12, homeTeam: "강원 FC", awayTeam: "김천 상무",
     homeTeamId: "gangwon", awayTeamId: "gimcheon",
     homeScore: 0, awayScore: 1, date: "2026-03-15", venue: "춘천송암스포츠타운",
-    avgRating: 2.7, totalRatings: 234, homeTeamLogo: "🟤", awayTeamLogo: "⚪",
+    avgRating: 2.7, homeAvgRating: 2.3, awayAvgRating: 3.1, totalRatings: 234, homeTeamLogo: "🟤", awayTeamLogo: "⚪",
   },
   {
     id: "match-6", round: 12, homeTeam: "광주 FC", awayTeam: "수원 FC",
     homeTeamId: "gwangju", awayTeamId: "suwonfc",
     homeScore: 2, awayScore: 1, date: "2026-03-15", venue: "광주축구전용구장",
-    avgRating: 3.5, totalRatings: 345, homeTeamLogo: "🟡", awayTeamLogo: "🔵",
+    avgRating: 3.5, homeAvgRating: 3.8, awayAvgRating: 3.0, totalRatings: 345, homeTeamLogo: "🟡", awayTeamLogo: "🔵",
   },
-  // Previous rounds for team schedules
   {
     id: "match-7", round: 11, homeTeam: "울산 HD", awayTeam: "FC 서울",
     homeTeamId: "ulsan", awayTeamId: "fcseoul",
     homeScore: 1, awayScore: 2, date: "2026-03-07", venue: "울산문수축구경기장",
-    avgRating: 3.8, totalRatings: 890, homeTeamLogo: "🟠", awayTeamLogo: "🔴",
+    avgRating: 3.8, homeAvgRating: 3.2, awayAvgRating: 4.1, totalRatings: 890, homeTeamLogo: "🟠", awayTeamLogo: "🔴",
   },
   {
     id: "match-8", round: 11, homeTeam: "수원 삼성", awayTeam: "전북 현대",
     homeTeamId: "suwon", awayTeamId: "jeonbuk",
     homeScore: 0, awayScore: 3, date: "2026-03-07", venue: "수원월드컵경기장",
-    avgRating: 3.2, totalRatings: 567, homeTeamLogo: "🔵", awayTeamLogo: "🟢",
+    avgRating: 3.2, homeAvgRating: 2.5, awayAvgRating: 4.2, totalRatings: 567, homeTeamLogo: "🔵", awayTeamLogo: "🟢",
   },
   {
     id: "match-9", round: 10, homeTeam: "FC 서울", awayTeam: "전북 현대",
     homeTeamId: "fcseoul", awayTeamId: "jeonbuk",
     homeScore: 1, awayScore: 1, date: "2026-02-28", venue: "서울월드컵경기장",
-    avgRating: 3.6, totalRatings: 1102, homeTeamLogo: "🔴", awayTeamLogo: "🟢",
+    avgRating: 3.6, homeAvgRating: 3.5, awayAvgRating: 3.7, totalRatings: 1102, homeTeamLogo: "🔴", awayTeamLogo: "🟢",
   },
-  // Upcoming round (not yet played)
   {
     id: "match-10", round: 13, homeTeam: "수원 삼성", awayTeam: "FC 서울",
     homeTeamId: "suwon", awayTeamId: "fcseoul",
     homeScore: 0, awayScore: 0, date: "2026-03-28", venue: "수원월드컵경기장",
-    avgRating: 0, totalRatings: 0, homeTeamLogo: "🔵", awayTeamLogo: "🔴",
+    avgRating: 0, homeAvgRating: 0, awayAvgRating: 0, totalRatings: 0, homeTeamLogo: "🔵", awayTeamLogo: "🔴",
   },
   {
     id: "match-11", round: 13, homeTeam: "울산 HD", awayTeam: "전북 현대",
     homeTeamId: "ulsan", awayTeamId: "jeonbuk",
     homeScore: 0, awayScore: 0, date: "2026-03-28", venue: "울산문수축구경기장",
-    avgRating: 0, totalRatings: 0, homeTeamLogo: "🟠", awayTeamLogo: "🟢",
+    avgRating: 0, homeAvgRating: 0, awayAvgRating: 0, totalRatings: 0, homeTeamLogo: "🟠", awayTeamLogo: "🟢",
   },
   {
     id: "match-12", round: 13, homeTeam: "인천 유나이티드", awayTeam: "대구 FC",
     homeTeamId: "incheon", awayTeamId: "daegu",
     homeScore: 0, awayScore: 0, date: "2026-03-29", venue: "인천축구전용경기장",
-    avgRating: 0, totalRatings: 0, homeTeamLogo: "🔷", awayTeamLogo: "🔵",
+    avgRating: 0, homeAvgRating: 0, awayAvgRating: 0, totalRatings: 0, homeTeamLogo: "🔷", awayTeamLogo: "🔵",
   },
 ];
 
