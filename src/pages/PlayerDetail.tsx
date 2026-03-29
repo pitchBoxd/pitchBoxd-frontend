@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
-import { allPlayers, teams, playerMatchRatings } from "@/data/mockData";
+import { allPlayers, teams, playerMatchRatings, playerReviews } from "@/data/mockData";
 import { RatingBadge } from "@/components/RatingBadge";
 import { StarRating } from "@/components/StarRating";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Users, ThumbsUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const positionColor: Record<string, string> = {
