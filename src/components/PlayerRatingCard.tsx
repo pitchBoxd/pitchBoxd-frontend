@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type Player, type Review, playerReviews } from "@/data/mockData";
+import { type Player, type PlayerReview, playerReviews } from "@/data/mockData";
 import { RatingBadge } from "./RatingBadge";
 import { StarRating } from "./StarRating";
 import { Button } from "./ui/button";
