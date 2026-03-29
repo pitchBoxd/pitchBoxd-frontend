@@ -105,6 +105,41 @@ const PlayerDetail = () => {
             ))}
           </div>
         )}
+
+        {/* Player reviews */}
+        <h2 className="font-display font-semibold text-foreground text-sm mb-4 mt-8">
+          한줄평 ({reviews.length})
+        </h2>
+        {reviews.length === 0 ? (
+          <p className="text-muted-foreground text-sm">아직 한줄평이 없습니다.</p>
+        ) : (
+          <div className="space-y-3">
+            {reviews.map((review) => (
+              <div
+                key={review.id}
+                className="rounded-lg border border-border bg-card p-4 space-y-2"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">{review.author}</span>
+                  <div className="flex items-center gap-1.5">
+                    <StarRating rating={review.rating} size="sm" />
+                    <span className="text-xs font-display font-bold text-accent">{review.rating}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">{review.text}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(review.createdAt).toLocaleDateString("ko-KR")}
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <ThumbsUp className="w-3 h-3" />
+                    <span>{review.likes}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
