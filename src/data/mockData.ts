@@ -203,23 +203,29 @@ export const playerMatchRatings: Record<string, { matchId: string; rating: numbe
   ],
 };
 
+// Player review with match context
+export interface PlayerReview extends Review {
+  matchId: string;
+  matchLabel: string;
+}
+
 // Player reviews per player ID
-export const playerReviews: Record<string, Review[]> = {
+export const playerReviews: Record<string, PlayerReview[]> = {
   p1: [
-    { id: "pr1", author: "미드필더덕후", rating: 4.5, text: "경기 템포 조절이 예술이었다. 역시 기성용.", likes: 89, createdAt: "2026-03-14T19:00:00" },
-    { id: "pr2", author: "서울팬_준호", rating: 5, text: "이 경기 MVP. 패스 성공률 미쳤음", likes: 124, createdAt: "2026-03-14T18:45:00" },
-    { id: "pr3", author: "K리그초보", rating: 4, text: "후반 좀 지쳤지만 전반전은 완벽", likes: 34, createdAt: "2026-03-14T20:10:00" },
+    { id: "pr1", author: "미드필더덕후", rating: 4.5, text: "경기 템포 조절이 예술이었다. 역시 기성용.", likes: 89, createdAt: "2026-03-14T19:00:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
+    { id: "pr2", author: "서울팬_준호", rating: 5, text: "이 경기 MVP. 패스 성공률 미쳤음", likes: 124, createdAt: "2026-03-14T18:45:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
+    { id: "pr3", author: "K리그초보", rating: 4, text: "후반 좀 지쳤지만 전반전은 완벽", likes: 34, createdAt: "2026-03-14T20:10:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
   ],
   p3: [
-    { id: "pr4", author: "골잡이_팬", rating: 5, text: "해트트릭!! 레전드 경기 ⚽⚽⚽", likes: 201, createdAt: "2026-03-14T18:30:00" },
-    { id: "pr5", author: "수원팬_슬픔", rating: 4, text: "인정할 건 인정. 조영욱 오늘 미쳤다", likes: 67, createdAt: "2026-03-14T19:20:00" },
+    { id: "pr4", author: "골잡이_팬", rating: 5, text: "해트트릭!! 레전드 경기 ⚽⚽⚽", likes: 201, createdAt: "2026-03-14T18:30:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
+    { id: "pr5", author: "수원팬_슬픔", rating: 4, text: "인정할 건 인정. 조영욱 오늘 미쳤다", likes: 67, createdAt: "2026-03-14T19:20:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
   ],
   p2: [
-    { id: "pr6", author: "수비평론가", rating: 3.5, text: "무난한 경기. 큰 실수 없었음", likes: 22, createdAt: "2026-03-14T19:30:00" },
+    { id: "pr6", author: "수비평론가", rating: 3.5, text: "무난한 경기. 큰 실수 없었음", likes: 22, createdAt: "2026-03-14T19:30:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
   ],
   p8: [
-    { id: "pr7", author: "황인범_응원단", rating: 4.5, text: "기성용이랑 호흡 찰떡. 볼 배급 좋았다", likes: 78, createdAt: "2026-03-14T18:50:00" },
-    { id: "pr8", author: "전술분석가", rating: 4, text: "수비 가담도 적극적이었고, 전환 플레이 빨랐음", likes: 45, createdAt: "2026-03-14T19:15:00" },
+    { id: "pr7", author: "황인범_응원단", rating: 4.5, text: "기성용이랑 호흡 찰떡. 볼 배급 좋았다", likes: 78, createdAt: "2026-03-14T18:50:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
+    { id: "pr8", author: "전술분석가", rating: 4, text: "수비 가담도 적극적이었고, 전환 플레이 빨랐음", likes: 45, createdAt: "2026-03-14T19:15:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
   ],
 };
 
