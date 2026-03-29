@@ -28,6 +28,7 @@ const PlayerDetail = () => {
 
   const team = teams.find((t) => t.id === player.teamId);
   const matchRatings = playerMatchRatings[id || ""] || [];
+  const reviews = playerReviews[id || ""] || [];
 
   return (
     <div className="min-h-screen bg-background">
