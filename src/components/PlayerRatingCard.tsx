@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type Player, type Review, playerReviews } from "@/data/mockData";
+import { type Player, type PlayerReview, playerReviews } from "@/data/mockData";
 import { RatingBadge } from "./RatingBadge";
 import { StarRating } from "./StarRating";
 import { Button } from "./ui/button";
@@ -126,7 +126,7 @@ export const PlayerRatingCard = ({ player }: PlayerRatingCardProps) => {
   );
 };
 
-const PlayerReviewItem = ({ review }: { review: Review }) => (
+const PlayerReviewItem = ({ review }: { review: PlayerReview }) => (
   <div className="rounded-md border border-border bg-background p-3 space-y-2">
     <div className="flex items-center justify-between">
       <span className="text-xs font-medium text-foreground">{review.author}</span>

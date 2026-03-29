@@ -127,6 +127,14 @@ const PlayerDetail = () => {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">{review.text}</p>
+                {"matchLabel" in review && (
+                  <button
+                    onClick={() => navigate(`/match/${(review as any).matchId}`)}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    📍 {(review as any).matchLabel}
+                  </button>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted-foreground">
                     {new Date(review.createdAt).toLocaleDateString("ko-KR")}
