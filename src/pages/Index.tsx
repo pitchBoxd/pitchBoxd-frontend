@@ -1,18 +1,11 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { matches, matchReviews, teams } from "@/data/mockData";
+import { matches, matchReviews } from "@/data/mockData";
 import { Header } from "@/components/Header";
 import { MatchCard } from "@/components/MatchCard";
 import { ReviewCard } from "@/components/ReviewCard";
 import { TrendingUp, Flame, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const TODAY = "2026-03-23";
 
@@ -90,13 +83,6 @@ const Index = () => {
 
   const handleMatchClick = (id: string) => navigate(`/match/${id}`);
 
-  const handleTeamSelect = (teamId: string) => {
-    setMyTeamId(teamId);
-    localStorage.setItem("myTeamId", teamId);
-    // Force header re-render by triggering state
-    window.dispatchEvent(new Event("storage"));
-  };
-
   const filterLabel =
     filterMode === "round"
       ? `라운드 ${latestRound}`
@@ -125,38 +111,18 @@ const Index = () => {
           </p>
         </div>
 
-        {/* My Team Match */}
-        <div className="mb-8">
-          {myTeamId && myTeamMatch ? (
-            <>
-              <div className="flex items-center gap-2 mb-3">
-                <Heart className="w-4 h-4 text-pitch" />
-                <span className="font-display text-xs font-semibold text-pitch">
-                  우리 팀 경기
-                </span>
-              </div>
-              <MatchCard match={myTeamMatch} onClick={handleMatchClick} featured />
-            </>
-          ) : (
-            <div className="rounded-xl border border-border bg-card p-6 text-center space-y-3">
-              <p className="text-sm text-muted-foreground">
-                응원하는 팀을 선택하면 우리 팀 경기가 여기에 표시됩니다
-              </p>
-              <Select value={myTeamId} onValueChange={handleTeamSelect}>
-                <SelectTrigger className="w-48 mx-auto bg-secondary border-border">
-                  <SelectValue placeholder="팀 선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teams.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.logo} {team.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        {/* My Team Match (only when logged in with a team) */}
+        {myTeamId && myTeamMatch && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-3">
+              <Heart className="w-4 h-4 text-pitch" />
+              <span className="font-display text-xs font-semibold text-pitch">
+                우리 팀 경기
+              </span>
             </div>
-          )}
-        </div>
+            <MatchCard match={myTeamMatch} onClick={handleMatchClick} featured />
+          </div>
+        )}
 
         {/* Match List Header with Filter Toggle */}
         <div className="flex items-center justify-between mb-4">
