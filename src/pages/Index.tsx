@@ -1,18 +1,11 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { matches, matchReviews, teams } from "@/data/mockData";
+import { matches, matchReviews } from "@/data/mockData";
 import { Header } from "@/components/Header";
 import { MatchCard } from "@/components/MatchCard";
 import { ReviewCard } from "@/components/ReviewCard";
 import { TrendingUp, Flame, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const TODAY = "2026-03-23";
 
@@ -89,13 +82,6 @@ const Index = () => {
   }, [filteredMatches]);
 
   const handleMatchClick = (id: string) => navigate(`/match/${id}`);
-
-  const handleTeamSelect = (teamId: string) => {
-    setMyTeamId(teamId);
-    localStorage.setItem("myTeamId", teamId);
-    // Force header re-render by triggering state
-    window.dispatchEvent(new Event("storage"));
-  };
 
   const filterLabel =
     filterMode === "round"
