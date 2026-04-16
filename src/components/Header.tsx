@@ -1,7 +1,14 @@
-import { Tv, User, LogIn } from "lucide-react";
+import { Tv, User, LogIn, LogOut } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { label: "경기", path: "/" },
@@ -12,13 +19,11 @@ const navItems = [
 
 export const Header = () => {
   const location = useLocation();
-  // Simulated login state — replace with real auth later
-  const isLoggedIn = !!localStorage.getItem("myTeamId");
+  const { isLoggedIn, nickname, login, logout } = useAuth();
 
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container flex items-center h-14 px-4 mx-auto max-w-5xl">
-        {/* Left: Logo */}
         <NavLink to="/" className="flex items-center gap-2 mr-6">
           <Tv className="w-5 h-5 text-pitch" />
           <span className="font-display font-bold text-lg tracking-tight text-foreground">
@@ -26,7 +31,6 @@ export const Header = () => {
           </span>
         </NavLink>
 
-        {/* Center: Nav */}
         <nav className="flex-1 flex items-center justify-center gap-6 text-sm">
           {navItems.map((item) => {
             const isActive =
@@ -50,13 +54,30 @@ export const Header = () => {
           })}
         </nav>
 
-        {/* Right: Login / Profile */}
         {isLoggedIn ? (
-          <Button variant="ghost" size="icon" className="rounded-full" onClick={() => {}}>
-            <User className="w-4 h-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="rounded-full gap-2">
+                <div className="w-6 h-6 rounded-full bg-pitch flex items-center justify-center">
+                  <User className="w-3.5 h-3.5 text-primary-foreground" />
+                </div>
+                <span className="text-xs text-foreground hidden sm:inline">{nickname}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={logout} className="gap-2 text-destructive">
+                <LogOut className="w-4 h-4" />
+                로그아웃
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground gap-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground gap-1.5"
+            onClick={login}
+          >
             <LogIn className="w-4 h-4" />
             <span className="text-xs">로그인</span>
           </Button>

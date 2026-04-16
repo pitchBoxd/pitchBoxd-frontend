@@ -6,10 +6,10 @@ import { MatchCard } from "@/components/MatchCard";
 import { ReviewCard } from "@/components/ReviewCard";
 import { TrendingUp, Flame, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const TODAY = "2026-03-23";
 
-// Get ISO week start (Monday) and end (Sunday)
 function getWeekRange(dateStr: string) {
   const d = new Date(dateStr);
   const day = d.getDay();
@@ -28,26 +28,17 @@ type FilterMode = "round" | "week";
 
 const Index = () => {
   const navigate = useNavigate();
-
-  // My team from localStorage
-  const [myTeamId, setMyTeamId] = useState<string>(
-    () => localStorage.getItem("myTeamId") || ""
-  );
-
-  // Filter mode
+  const { isLoggedIn, myTeamId } = useAuth();
   const [filterMode, setFilterMode] = useState<FilterMode>("round");
 
-  // Determine the latest completed round
   const latestRound = useMemo(() => {
     const completedMatches = matches.filter((m) => m.date <= TODAY && m.totalRatings > 0);
     if (completedMatches.length === 0) return 12;
     return Math.max(...completedMatches.map((m) => m.round));
   }, []);
 
-  // Week range from TODAY
   const weekRange = useMemo(() => getWeekRange(TODAY), []);
 
-  // Filtered matches based on mode
   const filteredMatches = useMemo(() => {
     if (filterMode === "round") {
       return matches.filter((m) => m.round === latestRound);
@@ -57,21 +48,18 @@ const Index = () => {
     );
   }, [filterMode, latestRound, weekRange]);
 
-  // My team's match from filtered
   const myTeamMatch = useMemo(() => {
-    if (!myTeamId) return null;
+    if (!isLoggedIn || !myTeamId) return null;
     return filteredMatches.find(
       (m) => m.homeTeamId === myTeamId || m.awayTeamId === myTeamId
     ) || null;
-  }, [myTeamId, filteredMatches]);
+  }, [isLoggedIn, myTeamId, filteredMatches]);
 
-  // Other matches (exclude my team match)
   const otherMatches = useMemo(() => {
     if (!myTeamMatch) return filteredMatches;
     return filteredMatches.filter((m) => m.id !== myTeamMatch.id);
   }, [filteredMatches, myTeamMatch]);
 
-  // Hot reviews filtered
   const hotReviews = useMemo(() => {
     const filteredIds = new Set(filteredMatches.map((m) => m.id));
     return Object.entries(matchReviews)
@@ -93,7 +81,6 @@ const Index = () => {
       <Header />
 
       <main className="container max-w-5xl mx-auto px-4 py-10">
-        {/* Hero */}
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-pitch" />
@@ -111,8 +98,7 @@ const Index = () => {
           </p>
         </div>
 
-        {/* My Team Match (only when logged in with a team) */}
-        {myTeamId && myTeamMatch && (
+        {myTeamMatch && (
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-3">
               <Heart className="w-4 h-4 text-pitch" />
@@ -124,7 +110,6 @@ const Index = () => {
           </div>
         )}
 
-        {/* Match List Header with Filter Toggle */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display font-semibold text-foreground text-sm">
             {filterLabel} 전체 경기
@@ -155,7 +140,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Match Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {otherMatches.length > 0 ? (
             otherMatches.map((match) => (
@@ -168,7 +152,6 @@ const Index = () => {
           )}
         </div>
 
-        {/* Hot Reviews */}
         <div className="mt-10">
           <div className="flex items-center gap-2 mb-4">
             <Flame className="w-4 h-4 text-pitch" />
