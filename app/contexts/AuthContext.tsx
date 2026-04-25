@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface AuthState {
   isLoggedIn: boolean;
@@ -23,9 +23,11 @@ const DEMO_USER = {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    () => localStorage.getItem("demo_logged_in") === "true"
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(localStorage.getItem("demo_logged_in") === "true");
+  }, []);
 
   const login = () => {
     localStorage.setItem("demo_logged_in", "true");
