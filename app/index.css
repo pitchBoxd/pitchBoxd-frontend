@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -63,7 +65,12 @@
     font-family: var(--font-body);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
   }
 }
@@ -72,21 +79,27 @@
   .font-display {
     font-family: var(--font-display);
   }
+
   .font-body {
     font-family: var(--font-body);
   }
+
   .text-rating {
     color: hsl(var(--rating-star));
   }
+
   .bg-pitch {
     background-color: hsl(var(--pitch-green));
   }
+
   .bg-pitch-dim {
     background-color: hsl(var(--pitch-green-dim));
   }
+
   .text-pitch {
     color: hsl(var(--pitch-green));
   }
+
   .border-pitch {
     border-color: hsl(var(--pitch-green));
   }
