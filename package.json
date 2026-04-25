@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router build",
+    "start": "react-router-serve build/server/index.js",
     "lint": "eslint .",
-    "preview": "react-router build && npx serve build/client",
+    "preview": "react-router build && react-router-serve build/server/index.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -41,6 +42,7 @@
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@react-router/node": "^7.14.2",
+    "@react-router/serve": "^7.14.2",
     "@tanstack/react-query": "^5.83.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
