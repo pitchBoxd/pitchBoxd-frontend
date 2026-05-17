@@ -8,5 +8,8 @@ export default [
   route("teams/:id", "routes/team-detail.tsx"),
   route("players", "routes/players.tsx"),
   route("players/:id", "routes/player-detail.tsx"),
+  route("login", "routes/login.tsx"),
+  route("login/callback", "routes/login-callback.tsx"),
+  route("signup", "routes/signup.tsx"),
   route("*", "routes/not-found.tsx"),
 ] satisfies RouteConfig;

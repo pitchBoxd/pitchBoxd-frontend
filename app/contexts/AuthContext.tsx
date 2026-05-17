@@ -1,51 +1,65 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+
+export interface AuthUser {
+  id: number;
+  nickname: string;
+  accessToken: string;
+  myTeamId?: string;
+}
 
 interface AuthState {
   isLoggedIn: boolean;
+  user: AuthUser | null;
+  userId: number | null;
   nickname: string;
   myTeamId: string;
-  login: () => void;
+  loginWithUser: (user: AuthUser) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthState>({
   isLoggedIn: false,
+  user: null,
+  userId: null,
   nickname: "",
   myTeamId: "",
-  login: () => {},
+  loginWithUser: () => {},
   logout: () => {},
 });
 
-// Demo user — auto-login with preset data
-const DEMO_USER = {
-  nickname: "K리그팬_준호",
-  myTeamId: "fcseoul",
-};
+const STORAGE_KEY = "pitchboxd_user";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    setIsLoggedIn(localStorage.getItem("demo_logged_in") === "true");
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setUser(JSON.parse(raw) as AuthUser);
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+    }
   }, []);
 
-  const login = () => {
-    localStorage.setItem("demo_logged_in", "true");
-    setIsLoggedIn(true);
-  };
+  const loginWithUser = useCallback((nextUser: AuthUser) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
+    setUser(nextUser);
+  }, []);
 
-  const logout = () => {
-    localStorage.removeItem("demo_logged_in");
-    setIsLoggedIn(false);
-  };
+  const logout = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setUser(null);
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn,
-        nickname: isLoggedIn ? DEMO_USER.nickname : "",
-        myTeamId: isLoggedIn ? DEMO_USER.myTeamId : "",
-        login,
+        isLoggedIn: user !== null,
+        user,
+        userId: user?.id ?? null,
+        nickname: user?.nickname ?? "",
+        myTeamId: user?.myTeamId ?? "",
+        loginWithUser,
         logout,
       }}
     >

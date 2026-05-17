@@ -38,6 +38,15 @@ type Pages = {
       "id": string;
     };
   };
+  "/login": {
+    params: {};
+  };
+  "/login/callback": {
+    params: {};
+  };
+  "/signup": {
+    params: {};
+  };
   "/*": {
     params: {
       "*": string;
@@ -48,7 +57,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/match/:id" | "/rounds" | "/teams" | "/teams/:id" | "/players" | "/players/:id" | "/*";
+    page: "/" | "/match/:id" | "/rounds" | "/teams" | "/teams/:id" | "/players" | "/players/:id" | "/login" | "/login/callback" | "/signup" | "/*";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -78,6 +87,18 @@ type RouteFiles = {
     id: "routes/player-detail";
     page: "/players/:id";
   };
+  "routes/login.tsx": {
+    id: "routes/login";
+    page: "/login";
+  };
+  "routes/login-callback.tsx": {
+    id: "routes/login-callback";
+    page: "/login/callback";
+  };
+  "routes/signup.tsx": {
+    id: "routes/signup";
+    page: "/signup";
+  };
   "routes/not-found.tsx": {
     id: "routes/not-found";
     page: "/*";
@@ -93,5 +114,8 @@ type RouteModules = {
   "routes/team-detail": typeof import("./app/routes/team-detail.tsx");
   "routes/players": typeof import("./app/routes/players.tsx");
   "routes/player-detail": typeof import("./app/routes/player-detail.tsx");
+  "routes/login": typeof import("./app/routes/login.tsx");
+  "routes/login-callback": typeof import("./app/routes/login-callback.tsx");
+  "routes/signup": typeof import("./app/routes/signup.tsx");
   "routes/not-found": typeof import("./app/routes/not-found.tsx");
 };

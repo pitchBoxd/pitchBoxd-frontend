@@ -1,5 +1,5 @@
 import { Tv, User, LogIn, LogOut } from "lucide-react";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,7 +19,8 @@ const navItems = [
 
 export const Header = () => {
   const location = useLocation();
-  const { isLoggedIn, nickname, login, logout } = useAuth();
+  const navigate = useNavigate();
+  const { isLoggedIn, nickname, logout } = useAuth();
 
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -76,7 +77,7 @@ export const Header = () => {
             variant="ghost"
             size="sm"
             className="text-muted-foreground hover:text-foreground gap-1.5"
-            onClick={login}
+            onClick={() => navigate("/login")}
           >
             <LogIn className="w-4 h-4" />
             <span className="text-xs">로그인</span>

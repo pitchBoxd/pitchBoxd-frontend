@@ -1,80 +1,58 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router";
-import { matches, matchReviews } from "@/data/mockData";
 import { Header } from "@/components/Header";
 import { MatchCard } from "@/components/MatchCard";
 import { ReviewCard } from "@/components/ReviewCard";
 import { TrendingUp, Flame, Heart } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-
-const TODAY = "2026-03-23";
-
-function getWeekRange(dateStr: string) {
-  const d = new Date(dateStr);
-  const day = d.getDay();
-  const diffToMon = day === 0 ? -6 : 1 - day;
-  const mon = new Date(d);
-  mon.setDate(d.getDate() + diffToMon);
-  const sun = new Date(mon);
-  sun.setDate(mon.getDate() + 6);
-  return {
-    start: mon.toISOString().slice(0, 10),
-    end: sun.toISOString().slice(0, 10),
-  };
-}
-
-type FilterMode = "round" | "week";
+import { useReviewableMatches } from "@/lib/queries/matches";
+import { useHotReviews } from "@/lib/queries/reviews";
+import { toMatch } from "@/lib/adapters/match";
+import type { Review } from "@/data/mockData";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, myTeamId } = useAuth();
-  const [filterMode, setFilterMode] = useState<FilterMode>("round");
+  const { isLoggedIn, userId, myTeamId } = useAuth();
 
-  const latestRound = useMemo(() => {
-    const completedMatches = matches.filter((m) => m.date <= TODAY && m.totalRatings > 0);
-    if (completedMatches.length === 0) return 12;
-    return Math.max(...completedMatches.map((m) => m.round));
-  }, []);
+  const matchesQuery = useReviewableMatches(userId);
+  const hotReviewsQuery = useHotReviews(5);
 
-  const weekRange = useMemo(() => getWeekRange(TODAY), []);
-
-  const filteredMatches = useMemo(() => {
-    if (filterMode === "round") {
-      return matches.filter((m) => m.round === latestRound);
-    }
-    return matches.filter(
-      (m) => m.date >= weekRange.start && m.date <= weekRange.end
-    );
-  }, [filterMode, latestRound, weekRange]);
+  const matches = useMemo(
+    () => (matchesQuery.data ?? []).map(toMatch),
+    [matchesQuery.data],
+  );
 
   const myTeamMatch = useMemo(() => {
     if (!isLoggedIn || !myTeamId) return null;
-    return filteredMatches.find(
-      (m) => m.homeTeamId === myTeamId || m.awayTeamId === myTeamId
-    ) || null;
-  }, [isLoggedIn, myTeamId, filteredMatches]);
+    return (
+      matches.find(
+        (m) => m.homeTeamId === myTeamId || m.awayTeamId === myTeamId,
+      ) ?? null
+    );
+  }, [isLoggedIn, myTeamId, matches]);
 
   const otherMatches = useMemo(() => {
-    if (!myTeamMatch) return filteredMatches;
-    return filteredMatches.filter((m) => m.id !== myTeamMatch.id);
-  }, [filteredMatches, myTeamMatch]);
+    if (!myTeamMatch) return matches;
+    return matches.filter((m) => m.id !== myTeamMatch.id);
+  }, [matches, myTeamMatch]);
 
-  const hotReviews = useMemo(() => {
-    const filteredIds = new Set(filteredMatches.map((m) => m.id));
-    return Object.entries(matchReviews)
-      .filter(([matchId]) => filteredIds.has(matchId))
-      .flatMap(([, reviews]) => reviews)
-      .sort((a, b) => b.likes - a.likes)
-      .slice(0, 5);
-  }, [filteredMatches]);
+  const hotReviews = useMemo<Review[]>(
+    () =>
+      (hotReviewsQuery.data ?? []).map((r) => ({
+        id: String(r.id),
+        author: r.authorNickname,
+        rating: r.rating,
+        text: r.content,
+        likes: Number(r.likeCount),
+        createdAt: "",
+      })),
+    [hotReviewsQuery.data],
+  );
 
   const handleMatchClick = (id: string) => navigate(`/match/${id}`);
 
-  const filterLabel =
-    filterMode === "round"
-      ? `라운드 ${latestRound}`
-      : `${weekRange.start.slice(5)} ~ ${weekRange.end.slice(5)}`;
+  const isMatchesLoading = matchesQuery.isLoading && userId !== null;
+  const isAnonymous = userId === null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,42 +90,30 @@ const Index = () => {
 
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display font-semibold text-foreground text-sm">
-            {filterLabel} 전체 경기
+            리뷰할 수 있는 경기
           </h2>
-          <div className="flex items-center rounded-lg border border-border bg-secondary p-0.5 text-xs">
-            <button
-              onClick={() => setFilterMode("round")}
-              className={cn(
-                "px-3 py-1.5 rounded-md transition-colors font-medium",
-                filterMode === "round"
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              라운드
-            </button>
-            <button
-              onClick={() => setFilterMode("week")}
-              className={cn(
-                "px-3 py-1.5 rounded-md transition-colors font-medium",
-                filterMode === "week"
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              이번 주
-            </button>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {otherMatches.length > 0 ? (
+          {isMatchesLoading ? (
+            <p className="col-span-2 text-center text-sm text-muted-foreground py-8">
+              불러오는 중…
+            </p>
+          ) : isAnonymous ? (
+            <p className="col-span-2 text-center text-sm text-muted-foreground py-8">
+              로그인하면 평가할 수 있는 경기 목록을 볼 수 있어요.
+            </p>
+          ) : otherMatches.length > 0 ? (
             otherMatches.map((match) => (
-              <MatchCard key={match.id} match={match} onClick={handleMatchClick} />
+              <MatchCard
+                key={match.id}
+                match={match}
+                onClick={handleMatchClick}
+              />
             ))
           ) : (
             <p className="col-span-2 text-center text-sm text-muted-foreground py-8">
-              해당 기간에 경기가 없습니다
+              평가할 수 있는 경기가 없습니다
             </p>
           )}
         </div>
@@ -156,11 +122,15 @@ const Index = () => {
           <div className="flex items-center gap-2 mb-4">
             <Flame className="w-4 h-4 text-pitch" />
             <h2 className="font-display font-semibold text-foreground text-sm">
-              {filterLabel} 가장 핫한 한줄평
+              가장 핫한 한줄평
             </h2>
           </div>
           <div className="space-y-3">
-            {hotReviews.length > 0 ? (
+            {hotReviewsQuery.isLoading ? (
+              <p className="text-center text-sm text-muted-foreground py-8">
+                불러오는 중…
+              </p>
+            ) : hotReviews.length > 0 ? (
               hotReviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
               ))
