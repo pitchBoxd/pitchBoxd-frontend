@@ -1,14 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { reissue } from "@/lib/api/auth";
 
 export interface AuthUser {
   id: number;
   nickname: string;
-  accessToken: string;
   myTeamId?: string;
 }
 
 interface AuthState {
   isLoggedIn: boolean;
+  isLoading: boolean;
   user: AuthUser | null;
   userId: number | null;
   nickname: string;
@@ -19,6 +20,7 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState>({
   isLoggedIn: false,
+  isLoading: true,
   user: null,
   userId: null,
   nickname: "",
@@ -27,27 +29,22 @@ const AuthContext = createContext<AuthState>({
   logout: () => {},
 });
 
-const STORAGE_KEY = "pitchboxd_user";
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setUser(JSON.parse(raw) as AuthUser);
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
-    }
+    reissue()
+      .then((data) => setUser({ id: data.id, nickname: data.nickname }))
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, []);
 
   const loginWithUser = useCallback((nextUser: AuthUser) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
     setUser(nextUser);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
     setUser(null);
   }, []);
 
@@ -55,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         isLoggedIn: user !== null,
+        isLoading,
         user,
         userId: user?.id ?? null,
         nickname: user?.nickname ?? "",

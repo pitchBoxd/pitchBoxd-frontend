@@ -6,6 +6,6 @@ export function useMyInfo(userId: number | null) {
   return useQuery({
     queryKey: queryKeys.user.me(userId),
     enabled: userId !== null,
-    queryFn: () => getMyInfo(userId as number),
+    queryFn: () => getMyInfo(),
   });
 }

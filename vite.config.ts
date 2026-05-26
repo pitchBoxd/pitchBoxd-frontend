@@ -7,7 +7,7 @@ const API_TARGET = process.env.VITE_API_BASE_URL || "http://localhost:8080";
 export default defineConfig({
   server: {
     host: "::",
-    port: 8080,
+    port: 3000,
     hmr: {
       overlay: false,
     },

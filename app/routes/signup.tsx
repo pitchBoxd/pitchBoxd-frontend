@@ -1,50 +1,49 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { Tv, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { googleSignup } from "@/lib/api/auth";
+import { oauthSignup } from "@/lib/api/auth";
 import { getUserIdFromToken } from "@/lib/jwt";
 import { ApiError } from "@/lib/api/client";
-import type { GoogleUserInfo } from "@/lib/api/auth";
 
-const PENDING_KEY = "pitchboxd_pending_signup";
 const NICKNAME_MAX = 20;
 const NICKNAME_RE = /^[\w가-힣ㄱ-ㅎㅏ-ㅣ_-]{2,20}$/;
 
-interface PendingSignup {
-  idToken: string;
-  userInfo: GoogleUserInfo;
+function decodeSignupTokenEmail(token: string): string | null {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(atob(payload));
+    return typeof decoded.email === "string" ? decoded.email : null;
+  } catch {
+    return null;
+  }
 }
 
 const Signup = () => {
+  const [params] = useSearchParams();
   const navigate = useNavigate();
   const { loginWithUser } = useAuth();
-  const [pending, setPending] = useState<PendingSignup | null>(null);
+  const [signupToken, setSignupToken] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   const [nickname, setNickname] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const raw = sessionStorage.getItem(PENDING_KEY);
-    if (!raw) {
+    const token = params.get("signupToken");
+    if (!token) {
       navigate("/login", { replace: true });
       return;
     }
-    try {
-      const parsed = JSON.parse(raw) as PendingSignup;
-      setPending(parsed);
-      setNickname(parsed.userInfo.name?.slice(0, NICKNAME_MAX) ?? "");
-    } catch {
-      sessionStorage.removeItem(PENDING_KEY);
-      navigate("/login", { replace: true });
-    }
-  }, [navigate]);
+    setSignupToken(token);
+    setEmail(decodeSignupTokenEmail(token));
+  }, [params, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pending) return;
+    if (!signupToken) return;
 
     const trimmed = nickname.trim();
     if (!NICKNAME_RE.test(trimmed)) {
@@ -57,17 +56,13 @@ const Signup = () => {
     setError(null);
     setSubmitting(true);
     try {
-      const token = await googleSignup({
-        idToken: pending.idToken,
-        nickname: trimmed,
-      });
+      const token = await oauthSignup({ signupToken, nickname: trimmed });
 
       const userId = getUserIdFromToken(token.accessToken);
       if (userId === null) {
         throw new Error("토큰에서 사용자 ID를 읽을 수 없습니다.");
       }
 
-      sessionStorage.removeItem(PENDING_KEY);
       loginWithUser({
         id: userId,
         nickname: trimmed,
@@ -87,7 +82,7 @@ const Signup = () => {
     }
   };
 
-  if (!pending) {
+  if (!signupToken) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-5 h-5 text-pitch animate-spin" />
@@ -115,28 +110,14 @@ const Signup = () => {
             평점과 한줄평에 표시될 이름이에요. 가입 후에도 변경할 수 있습니다.
           </p>
 
-          <div className="flex items-center gap-3 mb-6 rounded-md border border-border bg-secondary/40 p-3">
-            {pending.userInfo.picture ? (
-              <img
-                src={pending.userInfo.picture}
-                alt=""
-                className="w-9 h-9 rounded-full"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="w-9 h-9 rounded-full bg-pitch flex items-center justify-center font-display text-sm font-bold text-primary-foreground">
-                {pending.userInfo.name?.[0] ?? "?"}
+          {email && (
+            <div className="flex items-center gap-3 mb-6 rounded-md border border-border bg-secondary/40 p-3">
+              <div className="w-9 h-9 rounded-full bg-pitch flex items-center justify-center font-display text-sm font-bold text-primary-foreground shrink-0">
+                {email[0].toUpperCase()}
               </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-foreground truncate">
-                {pending.userInfo.name}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {pending.userInfo.email}
-              </p>
+              <p className="text-sm text-muted-foreground truncate">{email}</p>
             </div>
-          </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -188,10 +169,7 @@ const Signup = () => {
 
           <button
             type="button"
-            onClick={() => {
-              sessionStorage.removeItem(PENDING_KEY);
-              navigate("/login", { replace: true });
-            }}
+            onClick={() => navigate("/login", { replace: true })}
             className="mt-6 w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             다른 Google 계정으로 다시 시도

@@ -3,17 +3,8 @@ import { useNavigate, useSearchParams } from "react-router";
 import { Loader2, Tv, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { consumeStoredState } from "@/lib/google-oauth";
-import { googleLogin, getMyInfo, type GoogleUserInfo } from "@/lib/api/auth";
-import { getUserIdFromToken } from "@/lib/jwt";
+import { getMyInfo } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
-
-const PENDING_KEY = "pitchboxd_pending_signup";
-
-export interface PendingSignup {
-  idToken: string;
-  userInfo: GoogleUserInfo;
-}
 
 const LoginCallback = () => {
   const [params] = useSearchParams();
@@ -26,23 +17,16 @@ const LoginCallback = () => {
     if (ran.current) return;
     ran.current = true;
 
-    const code = params.get("code");
-    const state = params.get("state");
-    const oauthError = params.get("error");
+    const userIdParam = params.get("userId");
 
-    if (oauthError) {
-      setError(`Google 인증이 취소되었습니다 (${oauthError})`);
+    if (!userIdParam) {
+      setError("사용자 정보가 전달되지 않았습니다.");
       return;
     }
 
-    if (!code) {
-      setError("인증 코드가 전달되지 않았습니다.");
-      return;
-    }
-
-    const storedState = consumeStoredState();
-    if (storedState && state && storedState !== state) {
-      setError("보안 상태값이 일치하지 않습니다. 다시 시도해 주세요.");
+    const userId = Number(userIdParam);
+    if (!Number.isFinite(userId)) {
+      setError("사용자 정보가 올바르지 않습니다.");
       return;
     }
 
@@ -50,37 +34,10 @@ const LoginCallback = () => {
 
     (async () => {
       try {
-        const response = await googleLogin({ authorizationCode: code });
-
-        if (!response.isRegistered) {
-          const pending: PendingSignup = {
-            idToken: response.idToken,
-            userInfo: response.userInfo,
-          };
-          sessionStorage.setItem(PENDING_KEY, JSON.stringify(pending));
-          if (!cancelled) navigate("/signup", { replace: true });
-          return;
-        }
-
-        const userId = getUserIdFromToken(response.accessToken);
-        if (userId === null) {
-          throw new Error("토큰에서 사용자 ID를 읽을 수 없습니다.");
-        }
-
-        let nickname = response.userInfo.name;
-        try {
-          const me = await getMyInfo(userId);
-          nickname = me.nickname || nickname;
-        } catch {
-          // ignore, fall back to Google profile name
-        }
+        const me = await getMyInfo();
 
         if (cancelled) return;
-        loginWithUser({
-          id: userId,
-          nickname,
-          accessToken: response.accessToken,
-        });
+        loginWithUser({ id: userId, nickname: me.nickname });
         navigate("/", { replace: true });
       } catch (e) {
         if (cancelled) return;
