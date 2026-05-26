@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { Tv, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { oauthSignup } from "@/lib/api/auth";
-import { getUserIdFromToken } from "@/lib/jwt";
 import { ApiError } from "@/lib/api/client";
 
 const NICKNAME_MAX = 20;
@@ -21,8 +20,16 @@ function decodeSignupTokenEmail(token: string): string | null {
   }
 }
 
+function getSignupTokenFromCookie(): string | null {
+  return (
+    document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("signupToken="))
+      ?.split("=")[1] ?? null
+  );
+}
+
 const Signup = () => {
-  const [params] = useSearchParams();
   const navigate = useNavigate();
   const { loginWithUser } = useAuth();
   const [signupToken, setSignupToken] = useState<string | null>(null);
@@ -32,14 +39,14 @@ const Signup = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const token = params.get("signupToken");
+    const token = getSignupTokenFromCookie();
     if (!token) {
       navigate("/login", { replace: true });
       return;
     }
     setSignupToken(token);
     setEmail(decodeSignupTokenEmail(token));
-  }, [params, navigate]);
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,18 +63,9 @@ const Signup = () => {
     setError(null);
     setSubmitting(true);
     try {
-      const token = await oauthSignup({ signupToken, nickname: trimmed });
+      const user = await oauthSignup({ signupToken, nickname: trimmed });
 
-      const userId = getUserIdFromToken(token.accessToken);
-      if (userId === null) {
-        throw new Error("토큰에서 사용자 ID를 읽을 수 없습니다.");
-      }
-
-      loginWithUser({
-        id: userId,
-        nickname: trimmed,
-        accessToken: token.accessToken,
-      });
+      loginWithUser({ id: user.id, nickname: trimmed });
       navigate("/", { replace: true });
     } catch (e) {
       if (e instanceof ApiError) {

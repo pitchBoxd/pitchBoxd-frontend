@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { Loader2, Tv, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,7 +7,6 @@ import { getMyInfo } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
 
 const LoginCallback = () => {
-  const [params] = useSearchParams();
   const navigate = useNavigate();
   const { loginWithUser } = useAuth();
   const [error, setError] = useState<string | null>(null);
@@ -17,19 +16,6 @@ const LoginCallback = () => {
     if (ran.current) return;
     ran.current = true;
 
-    const userIdParam = params.get("userId");
-
-    if (!userIdParam) {
-      setError("사용자 정보가 전달되지 않았습니다.");
-      return;
-    }
-
-    const userId = Number(userIdParam);
-    if (!Number.isFinite(userId)) {
-      setError("사용자 정보가 올바르지 않습니다.");
-      return;
-    }
-
     let cancelled = false;
 
     (async () => {
@@ -37,7 +23,7 @@ const LoginCallback = () => {
         const me = await getMyInfo();
 
         if (cancelled) return;
-        loginWithUser({ id: userId, nickname: me.nickname });
+        loginWithUser({ id: me.id, nickname: me.nickname });
         navigate("/", { replace: true });
       } catch (e) {
         if (cancelled) return;
@@ -54,7 +40,7 @@ const LoginCallback = () => {
     return () => {
       cancelled = true;
     };
-  }, [params, navigate, loginWithUser]);
+  }, [navigate, loginWithUser]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
