@@ -6,10 +6,10 @@ interface RatingBadgeProps {
 }
 
 const getRatingColor = (rating: number) => {
-  if (rating >= 4) return "bg-primary text-primary-foreground";
-  if (rating >= 3) return "bg-accent text-accent-foreground";
-  if (rating >= 2) return "bg-muted text-muted-foreground";
-  return "bg-destructive text-destructive-foreground";
+  if (rating <= 0) return "bg-zinc-700 text-zinc-300 border border-border/40";
+  if (rating < 2.5) return "bg-destructive text-destructive-foreground";
+  if (rating < 4.0) return "bg-accent text-accent-foreground";
+  return "bg-primary text-primary-foreground";
 };
 
 const sizeClasses = {

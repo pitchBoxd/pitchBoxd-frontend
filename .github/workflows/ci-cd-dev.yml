@@ -1,0 +1,129 @@
+# =============================================================================
+# Frontend CI/CD Pipeline
+# =============================================================================
+# Trigger:
+#   - dev 브랜치로 PR이 열리거나 업데이트되면 → 테스트 & 빌드 검증만 수행
+#   - dev 브랜치에 push(병합 포함)가 일어나면  → S3 배포 + CloudFront 캐시 무효화
+#
+# 필요한 GitHub Secrets:
+#   - AWS_ACCESS_KEY_ID
+#   - AWS_SECRET_ACCESS_KEY
+#   - AWS_REGION              (예: ap-northeast-2)
+#   - S3_BUCKET_NAME          (예: my-frontend-bucket)
+#   - CLOUDFRONT_DISTRIBUTION_ID
+#   - VITE_API_BASE_URL       (예: https://pitchdbox.site)
+# =============================================================================
+
+name: Frontend Dev CI/CD
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+  push:
+    branches:
+      - dev
+
+# 동일 브랜치에서 중복 실행 방지 (PR 업데이트 시 이전 run 취소)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===========================================================================
+  # Job 1: 테스트 & 빌드 검증 (PR + push 모두 실행)
+  # ===========================================================================
+  test-and-build:
+    name: 🧪 Test & Build Verification
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Lint
+        run: npm run lint
+
+      - name: 🧪 Run tests
+        run: npm run test
+
+      - name: 🏗️ Build (verification)
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+
+      # 배포 Job에서 빌드 결과물을 재사용하기 위해 artifact로 업로드
+      - name: 📤 Upload build artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build/client
+          retention-days: 1
+
+  # ===========================================================================
+  # Job 2: S3 배포 + CloudFront 무효화 (push 이벤트에서만 실행)
+  # ===========================================================================
+  deploy:
+    name: 🚀 Deploy to S3 + CloudFront
+    runs-on: ubuntu-latest
+    needs: test-and-build
+    if: github.event_name == 'push'
+    environment: dev
+
+    # OIDC를 사용할 경우 아래 permissions 블록이 필요합니다.
+    # 시크릿 키 방식만 사용할 경우 제거해도 무방합니다.
+    # permissions:
+    #   id-token: write
+    #   contents: read
+
+    steps:
+      - name: 📥 Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/client
+
+      # -----------------------------------------------------------------
+      # AWS 자격 증명 (시크릿 키 방식)
+      # OIDC 방식을 사용하려면 아래 블록을 주석 처리하고,
+      # 그 아래 OIDC 블록의 주석을 해제하세요.
+      # -----------------------------------------------------------------
+      - name: 🔑 Configure AWS credentials (Access Key)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # -----------------------------------------------------------------
+      # AWS 자격 증명 (OIDC 방식) — 필요 시 위 블록을 주석 처리 후 사용
+      # permissions 블록도 함께 활성화해야 합니다.
+      # -----------------------------------------------------------------
+      # - name: 🔑 Configure AWS credentials (OIDC)
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/<ROLE_NAME>
+      #     aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: 📤 Sync to S3
+        run: |
+          aws s3 sync build/client/ s3://${{ secrets.S3_BUCKET_NAME }} \
+            --delete=false
+
+      - name: 🌐 Invalidate CloudFront cache (index.html only)
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/index.html"

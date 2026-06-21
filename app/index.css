@@ -103,4 +103,12 @@
   .border-pitch {
     border-color: hsl(var(--pitch-green));
   }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

@@ -18,6 +18,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
             <p className="text-sm font-medium text-foreground">{review.author}</p>
             <p className="text-xs text-muted-foreground">
               {new Date(review.createdAt).toLocaleDateString("ko-KR")}
+              {review.isModified && <span className="ml-1 text-muted-foreground/70">(수정됨)</span>}
             </p>
           </div>
         </div>

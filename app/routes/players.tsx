@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router";
 import { Header } from "@/components/Header";
 import { allPlayers, teams } from "@/data/mockData";
-import { RatingBadge } from "@/components/RatingBadge";
-import { StarRating } from "@/components/StarRating";
 import { Users, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -59,8 +57,6 @@ const Players = () => {
                     </span>
                   </div>
                 </div>
-                <StarRating rating={player.avgRating} size="sm" />
-                <RatingBadge rating={player.avgRating} size="sm" />
                 <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
               </button>
             );

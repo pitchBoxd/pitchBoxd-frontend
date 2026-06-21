@@ -11,10 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
-  { label: "경기", path: "/" },
-  { label: "라운드", path: "/rounds" },
+  { label: "홈", path: "/" },
+  { label: "경기", path: "/rounds" },
   { label: "팀", path: "/teams" },
-  { label: "선수", path: "/players" },
 ];
 
 export const Header = () => {
@@ -65,8 +64,12 @@ export const Header = () => {
                 <span className="text-xs text-foreground hidden sm:inline">{nickname}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={logout} className="gap-2 text-destructive">
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={() => navigate("/profile")} className="gap-2 cursor-pointer">
+                <User className="w-4 h-4" />
+                마이페이지
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={logout} className="gap-2 text-destructive cursor-pointer">
                 <LogOut className="w-4 h-4" />
                 로그아웃
               </DropdownMenuItem>

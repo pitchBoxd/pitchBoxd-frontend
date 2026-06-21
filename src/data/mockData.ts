@@ -17,6 +17,7 @@ export interface Review {
   text: string;
   likes: number;
   createdAt: string;
+  isModified?: boolean;
 }
 
 export interface Match {
@@ -213,7 +214,7 @@ export interface PlayerReview extends Review {
 export const playerReviews: Record<string, PlayerReview[]> = {
   p1: [
     { id: "pr1", author: "미드필더덕후", rating: 4.5, text: "경기 템포 조절이 예술이었다. 역시 기성용.", likes: 89, createdAt: "2026-03-14T19:00:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
-    { id: "pr2", author: "서울팬_준호", rating: 5, text: "이 경기 MVP. 패스 성공률 미쳤음", likes: 124, createdAt: "2026-03-14T18:45:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
+    { id: "pr2", author: "서울팬_준호", rating: 5, text: "이 경기 MVP. 패스 성공률 미쳤음", likes: 124, createdAt: "2026-03-14T18:45:00", isModified: true, matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
     { id: "pr3", author: "K리그초보", rating: 4, text: "후반 좀 지쳤지만 전반전은 완벽", likes: 34, createdAt: "2026-03-14T20:10:00", matchId: "match-1", matchLabel: "FC 서울 vs 수원 삼성 (R12)" },
   ],
   p3: [
@@ -239,7 +240,7 @@ export const matchReviews: Record<string, Review[]> = {
     {
       id: "r2", author: "서울_Forever", rating: 5,
       text: "슈퍼매치 역대 최고의 경기! 조영욱의 해트트릭은 잊을 수 없을 것. 경기장 분위기도 미쳤다 🔥",
-      likes: 287, createdAt: "2026-03-14T18:15:00",
+      likes: 287, createdAt: "2026-03-14T18:15:00", isModified: true,
     },
     {
       id: "r3", author: "K리그_분석왕", rating: 4,

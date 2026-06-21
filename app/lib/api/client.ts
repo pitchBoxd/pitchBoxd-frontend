@@ -4,6 +4,14 @@ const SERVER_BASE =
   (typeof process !== "undefined" && process.env?.VITE_API_BASE_URL) ||
   "http://localhost:8080";
 
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+}
+
 function resolveUrl(path: string): string {
   if (path.startsWith("http")) return path;
   const normalized = path.startsWith("/") ? path : `/${path}`;
@@ -32,6 +40,8 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   searchParams?: Record<string, string | number | boolean | undefined | null>;
 }
 
+let reissuePromise: Promise<unknown> | null = null;
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, searchParams, headers, ...init } = options;
 
@@ -46,11 +56,20 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     if (query) url += `${url.includes("?") ? "&" : "?"}${query}`;
   }
 
+  const authHeaders: Record<string, string> = {};
+  if (!isServer) {
+    const token = getCookie("accessToken");
+    if (token) {
+      authHeaders["Authorization"] = `Bearer ${token}`;
+    }
+  }
+
   const response = await fetch(url, {
     ...init,
     headers: {
       Accept: "application/json",
       ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...authHeaders,
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -61,6 +80,25 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const payload = text ? safeJsonParse(text) : null;
 
   if (!response.ok) {
+    if (response.status === 401 && !path.includes("/auth/reissue")) {
+      if (!reissuePromise) {
+        reissuePromise = request("/api/v1/auth/reissue", { method: "POST" })
+          .finally(() => {
+            reissuePromise = null;
+          });
+      }
+      try {
+        await reissuePromise;
+        return await request<T>(path, options);
+      } catch (reissueError) {
+        throw new ApiError(
+          response.status,
+          payload,
+          `Request to ${path} failed with 401 and token reissue failed`,
+        );
+      }
+    }
+
     throw new ApiError(
       response.status,
       payload,

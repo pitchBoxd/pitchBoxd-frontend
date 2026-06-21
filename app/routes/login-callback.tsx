@@ -2,9 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Loader2, Tv, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, TEAM_NUMBER_ID_MAP } from "@/contexts/AuthContext";
 import { getMyInfo } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+}
+
+function deleteCookie(name: string) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+}
 
 const LoginCallback = () => {
   const navigate = useNavigate();
@@ -18,12 +31,31 @@ const LoginCallback = () => {
 
     let cancelled = false;
 
+    const accessToken = getCookie("accessToken");
+    const signupToken = getCookie("signupToken");
+
+    // accessToken이 없고 signupToken만 존재할 때 신규 회원으로 판단하여 회원가입 페이지로 보냅니다.
+    // 기존 회원은 accessToken이 존재하므로 이 단계를 건너뜁니다.
+    if (!accessToken && signupToken) {
+      navigate("/signup", { replace: true });
+      return;
+    }
+
     (async () => {
       try {
         const me = await getMyInfo();
 
         if (cancelled) return;
-        loginWithUser({ id: me.id, nickname: me.nickname });
+        const mappedTeamId = me.favoriteTeamId ? TEAM_NUMBER_ID_MAP[me.favoriteTeamId] : null;
+        const storedTeamId = mappedTeamId || (typeof window !== "undefined" ? localStorage.getItem(`favoriteTeam_${me.id}`) : null);
+
+        loginWithUser({
+          id: me.id,
+          nickname: me.nickname,
+          myTeamId: storedTeamId || undefined,
+        });
+        // 로그인 성공 시 미처 지워지지 않은 signupToken 쿠키가 있다면 정리합니다.
+        deleteCookie("signupToken");
         navigate("/", { replace: true });
       } catch (e) {
         if (cancelled) return;
@@ -39,6 +71,7 @@ const LoginCallback = () => {
 
     return () => {
       cancelled = true;
+      ran.current = false;
     };
   }, [navigate, loginWithUser]);
 

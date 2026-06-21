@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router build",
+    "build:dev": "react-router build --mode development",
     "start": "react-router-serve build/server/index.js",
     "lint": "eslint .",
     "preview": "react-router build && react-router-serve build/server/index.js",

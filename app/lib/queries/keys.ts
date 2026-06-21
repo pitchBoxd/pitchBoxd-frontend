@@ -1,4 +1,8 @@
 export const queryKeys = {
+  home: {
+    all: ["home"] as const,
+    data: (params: Record<string, any>) => ["home", "data", params] as const,
+  },
   matches: {
     all: ["matches"] as const,
     reviewable: (userId: number | null, filter?: string) =>

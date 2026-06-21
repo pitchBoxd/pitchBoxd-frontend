@@ -129,7 +129,10 @@ export const PlayerRatingCard = ({ player }: PlayerRatingCardProps) => {
 const PlayerReviewItem = ({ review }: { review: PlayerReview }) => (
   <div className="rounded-md border border-border bg-background p-3 space-y-2">
     <div className="flex items-center justify-between">
-      <span className="text-xs font-medium text-foreground">{review.author}</span>
+      <span className="text-xs font-medium text-foreground">
+        {review.author}
+        {review.isModified && <span className="ml-1 font-normal text-muted-foreground/70">(수정됨)</span>}
+      </span>
       <div className="flex items-center gap-1.5">
         <StarRating rating={review.rating} size="sm" />
         <span className="text-xs font-display font-bold text-accent">{review.rating}</span>

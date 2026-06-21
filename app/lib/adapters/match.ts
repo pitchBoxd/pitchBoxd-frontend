@@ -1,8 +1,31 @@
 import { teams, type Match } from "@/data/mockData";
 import type { MatchResponse } from "@/lib/api/types";
 
-function findTeam(name: string) {
-  return teams.find((t) => t.name === name || t.shortName === name);
+const BACKEND_TEAM_ID_MAP: Record<string, string> = {
+  seoul: "fcseoul",
+  suwon: "suwon",
+  jeonbuk: "jeonbuk",
+  ulsan: "ulsan",
+  daegu: "daegu",
+  incheon: "incheon",
+  pohang: "pohang",
+  jeju: "jeju",
+  gangwon: "gangwon",
+  kimcheon: "gimcheon",
+  gwangju: "gwangju",
+  suwonfc: "suwonfc",
+};
+
+export function findTeam(name: string) {
+  const normalized = name.toLowerCase();
+  const mappedId = BACKEND_TEAM_ID_MAP[normalized] || normalized;
+  return teams.find(
+    (t) =>
+      t.id === mappedId ||
+      t.name === name ||
+      t.shortName === name ||
+      t.id === normalized
+  );
 }
 
 function parseRound(round: string): number {
@@ -26,11 +49,12 @@ export function toMatch(response: MatchResponse): Match {
     awayScore: response.awayTeamScore,
     date,
     venue: response.stadium,
-    avgRating: response.matchRating,
+    avgRating: response.matchRating / 2,
     homeAvgRating: 0,
     awayAvgRating: 0,
     totalRatings: response.reviewCount,
     homeTeamLogo: home?.logo ?? "⚽",
     awayTeamLogo: away?.logo ?? "⚽",
+    reviewEndTime: response.reviewEndTime,
   };
 }

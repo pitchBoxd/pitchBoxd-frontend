@@ -37,6 +37,8 @@ export interface Match {
   homeTeamLogo: string;
   awayTeamLogo: string;
   isFeatured?: boolean;
+  season?: string;
+  reviewEndTime?: string;
 }
 
 export interface Team {
@@ -136,6 +138,20 @@ export const matches: Match[] = [
     homeScore: 0, awayScore: 0, date: "2026-03-29", venue: "인천축구전용경기장",
     avgRating: 0, homeAvgRating: 0, awayAvgRating: 0, totalRatings: 0, homeTeamLogo: "🔷", awayTeamLogo: "🔵",
   },
+  {
+    id: "match-2025-1", round: 1, homeTeam: "울산 HD", awayTeam: "전북 현대",
+    homeTeamId: "ulsan", awayTeamId: "jeonbuk",
+    homeScore: 1, awayScore: 0, date: "2025-03-01", venue: "울산문수축구경기장",
+    avgRating: 4.0, homeAvgRating: 4.2, awayAvgRating: 3.5, totalRatings: 850, homeTeamLogo: "🟠", awayTeamLogo: "🟢",
+    season: "2025"
+  },
+  {
+    id: "match-2025-2", round: 1, homeTeam: "FC 서울", awayTeam: "포항 스틸러스",
+    homeTeamId: "fcseoul", awayTeamId: "pohang",
+    homeScore: 2, awayScore: 1, date: "2025-03-02", venue: "서울월드컵경기장",
+    avgRating: 3.8, homeAvgRating: 4.0, awayAvgRating: 3.6, totalRatings: 920, homeTeamLogo: "🔴", awayTeamLogo: "🔴",
+    season: "2025"
+  }
 ];
 
 export const matchPlayers: Record<string, Player[]> = {

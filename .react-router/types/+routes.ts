@@ -19,6 +19,11 @@ type Pages = {
       "id": string;
     };
   };
+  "/match/:id/reviews": {
+    params: {
+      "id": string;
+    };
+  };
   "/rounds": {
     params: {};
   };
@@ -47,6 +52,9 @@ type Pages = {
   "/signup": {
     params: {};
   };
+  "/profile": {
+    params: {};
+  };
   "/*": {
     params: {
       "*": string;
@@ -57,7 +65,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/match/:id" | "/rounds" | "/teams" | "/teams/:id" | "/players" | "/players/:id" | "/login" | "/login/callback" | "/signup" | "/*";
+    page: "/" | "/match/:id" | "/match/:id/reviews" | "/rounds" | "/teams" | "/teams/:id" | "/players" | "/players/:id" | "/login" | "/login/callback" | "/signup" | "/profile" | "/*";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -66,6 +74,10 @@ type RouteFiles = {
   "routes/match-detail.tsx": {
     id: "routes/match-detail";
     page: "/match/:id";
+  };
+  "routes/match-reviews.tsx": {
+    id: "routes/match-reviews";
+    page: "/match/:id/reviews";
   };
   "routes/rounds.tsx": {
     id: "routes/rounds";
@@ -99,6 +111,10 @@ type RouteFiles = {
     id: "routes/signup";
     page: "/signup";
   };
+  "routes/profile.tsx": {
+    id: "routes/profile";
+    page: "/profile";
+  };
   "routes/not-found.tsx": {
     id: "routes/not-found";
     page: "/*";
@@ -109,6 +125,7 @@ type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/home": typeof import("./app/routes/home.tsx");
   "routes/match-detail": typeof import("./app/routes/match-detail.tsx");
+  "routes/match-reviews": typeof import("./app/routes/match-reviews.tsx");
   "routes/rounds": typeof import("./app/routes/rounds.tsx");
   "routes/teams": typeof import("./app/routes/teams.tsx");
   "routes/team-detail": typeof import("./app/routes/team-detail.tsx");
@@ -117,5 +134,6 @@ type RouteModules = {
   "routes/login": typeof import("./app/routes/login.tsx");
   "routes/login-callback": typeof import("./app/routes/login-callback.tsx");
   "routes/signup": typeof import("./app/routes/signup.tsx");
+  "routes/profile": typeof import("./app/routes/profile.tsx");
   "routes/not-found": typeof import("./app/routes/not-found.tsx");
 };

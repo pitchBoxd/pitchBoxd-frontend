@@ -3,8 +3,11 @@ import { Header } from "@/components/Header";
 import { allPlayers, teams, playerMatchRatings, playerReviews } from "@/data/mockData";
 import { RatingBadge } from "@/components/RatingBadge";
 import { StarRating } from "@/components/StarRating";
-import { ArrowLeft, Users, ThumbsUp } from "lucide-react";
+import { ArrowLeft, Users, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTogglePlayerReviewLike } from "@/lib/queries/matches";
 
 const positionColor: Record<string, string> = {
   GK: "text-accent",
@@ -17,6 +20,29 @@ const PlayerDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const player = allPlayers.find((p) => p.id === id);
+  const { isLoggedIn, userId } = useAuth();
+  const [likedState, setLikedState] = useState<Record<string | number, boolean>>({});
+  const togglePlayerReviewLikeMutation = useTogglePlayerReviewLike();
+
+  const handleLikeToggle = (reviewId: string | number) => {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
+
+    setLikedState((prev) => ({
+      ...prev,
+      [reviewId]: !prev[reviewId],
+    }));
+
+    const isMock = typeof reviewId === "string" || isNaN(Number(reviewId));
+    if (!isMock && userId) {
+      togglePlayerReviewLikeMutation.mutate({
+        playerReviewId: Number(reviewId),
+        userId,
+      });
+    }
+  };
 
   if (!player) {
     return (
@@ -139,10 +165,16 @@ const PlayerDetail = () => {
                   <span className="text-xs text-muted-foreground">
                     {new Date(review.createdAt).toLocaleDateString("ko-KR")}
                   </span>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <ThumbsUp className="w-3 h-3" />
-                    <span>{review.likes}</span>
-                  </div>
+                  <button
+                    onClick={() => handleLikeToggle(review.id)}
+                    className={cn(
+                      "flex items-center gap-1.5 text-xs transition-colors py-1 px-2 rounded-md hover:bg-secondary cursor-pointer",
+                      likedState[review.id] ? "text-rose-500 font-semibold" : "text-muted-foreground"
+                    )}
+                  >
+                    <Heart className={cn("w-3.5 h-3.5", likedState[review.id] && "fill-rose-500 text-rose-500")} />
+                    <span>{review.likes + (likedState[review.id] ? 1 : 0)}</span>
+                  </button>
                 </div>
               </div>
             ))}
