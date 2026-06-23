@@ -120,7 +120,7 @@ jobs:
       - name: 📤 Sync to S3
         run: |
           aws s3 sync build/client/ s3://${{ secrets.S3_BUCKET_NAME }} \
-            --delete=false
+            --delete
 
       - name: 🌐 Invalidate CloudFront cache (index.html only)
         run: |
