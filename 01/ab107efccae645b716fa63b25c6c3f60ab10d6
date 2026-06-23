@@ -1,0 +1,14 @@
+.github/workflows/ci-cd-dev.yml
+  h_09d9451df330ee 123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "01ab107efccae645b716fa63b25c6c3f60ab10d6",
+  "prompts": {},
+  "humans": {
+    "h_09d9451df330ee": {
+      "author": "yush <yush2202@gmail.com>"
+    }
+  }
+}
