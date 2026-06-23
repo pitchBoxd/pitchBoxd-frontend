@@ -13,5 +13,6 @@ export default [
   route("login/callback", "routes/login-callback.tsx"),
   route("signup", "routes/signup.tsx"),
   route("profile", "routes/profile.tsx"),
+  route("about", "routes/about.tsx"),
   route("*", "routes/not-found.tsx"),
 ] satisfies RouteConfig;

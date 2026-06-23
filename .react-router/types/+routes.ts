@@ -55,6 +55,9 @@ type Pages = {
   "/profile": {
     params: {};
   };
+  "/about": {
+    params: {};
+  };
   "/*": {
     params: {
       "*": string;
@@ -65,7 +68,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/match/:id" | "/match/:id/reviews" | "/rounds" | "/teams" | "/teams/:id" | "/players" | "/players/:id" | "/login" | "/login/callback" | "/signup" | "/profile" | "/*";
+    page: "/" | "/match/:id" | "/match/:id/reviews" | "/rounds" | "/teams" | "/teams/:id" | "/players" | "/players/:id" | "/login" | "/login/callback" | "/signup" | "/profile" | "/about" | "/*";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -115,6 +118,10 @@ type RouteFiles = {
     id: "routes/profile";
     page: "/profile";
   };
+  "routes/about.tsx": {
+    id: "routes/about";
+    page: "/about";
+  };
   "routes/not-found.tsx": {
     id: "routes/not-found";
     page: "/*";
@@ -135,5 +142,6 @@ type RouteModules = {
   "routes/login-callback": typeof import("./app/routes/login-callback.tsx");
   "routes/signup": typeof import("./app/routes/signup.tsx");
   "routes/profile": typeof import("./app/routes/profile.tsx");
+  "routes/about": typeof import("./app/routes/about.tsx");
   "routes/not-found": typeof import("./app/routes/not-found.tsx");
 };

@@ -26,7 +26,7 @@ export const Header = () => {
       <div className="container flex items-center h-14 px-4 mx-auto max-w-5xl">
         <NavLink to="/" className="flex items-center gap-2 mr-6">
           <Tv className="w-5 h-5 text-pitch" />
-          <span className="font-display font-bold text-lg tracking-tight text-foreground">
+          <span className="text-lg font-semibold text-foreground">
             PitchBoxd
           </span>
         </NavLink>

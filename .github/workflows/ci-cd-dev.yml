@@ -61,7 +61,7 @@ jobs:
       - name: 🏗️ Build (verification)
         run: npm run build
         env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
 
       # 배포 Job에서 빌드 결과물을 재사용하기 위해 artifact로 업로드
       - name: 📤 Upload build artifact
